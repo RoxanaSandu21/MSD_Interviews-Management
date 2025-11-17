@@ -1,46 +1,43 @@
 package com.example.interviewmgmt.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 @Entity
 public class Question {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     private String text;
-    private String difficulty; // EASY, MEDIUM, HARD
-    private String category;   // e.g. "Java", "SQL", "HR"
 
-    public Long getId() {
-        return id;
-    }
+    @NotBlank
+    private String area;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @NotBlank
+    private String difficulty;
 
-    public String getText() {
-        return text;
-    }
+    @NotBlank
+    private String correctAnswer;
 
-    public void setText(String text) {
+    public Question() {}
+
+    public Question(String text, String area, String difficulty, String correctAnswer) {
         this.text = text;
-    }
-
-    public String getDifficulty() {
-        return difficulty;
-    }
-
-    public void setDifficulty(String difficulty) {
+        this.area = area;
         this.difficulty = difficulty;
+        this.correctAnswer = correctAnswer;
     }
 
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
+    public Long getId() { return id; }
+    public String getText() { return text; }
+    public void setText(String text) { this.text = text; }
+    public String getArea() { return area; }
+    public void setArea(String area) { this.area = area; }
+    public String getDifficulty() { return difficulty; }
+    public void setDifficulty(String difficulty) { this.difficulty = difficulty; }
+    public String getCorrectAnswer() { return correctAnswer; }
+    public void setCorrectAnswer(String correctAnswer) { this.correctAnswer = correctAnswer; }
 }

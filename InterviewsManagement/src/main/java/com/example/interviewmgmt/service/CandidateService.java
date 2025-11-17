@@ -1,12 +1,13 @@
 package com.example.interviewmgmt.service;
 
-import org.springframework.stereotype.Service;
-import com.example.interviewmgmt.repo.CandidateRepository;
 import com.example.interviewmgmt.model.Candidate;
+import com.example.interviewmgmt.repo.CandidateRepository;
+import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
 public class CandidateService {
+
     private final CandidateRepository candidateRepository;
 
     public CandidateService(CandidateRepository candidateRepository) {
@@ -17,7 +18,11 @@ public class CandidateService {
         return candidateRepository.findAll();
     }
 
-    public Candidate addCandidate(Candidate candidate) {
+    public Candidate getCandidateById(Long id) {
+        return candidateRepository.findById(id).orElse(null);
+    }
+
+    public Candidate saveCandidate(Candidate candidate) {
         return candidateRepository.save(candidate);
     }
 

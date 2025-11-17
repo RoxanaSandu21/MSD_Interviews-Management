@@ -1,13 +1,12 @@
 package com.example.interviewmgmt.web;
 
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
 import com.example.interviewmgmt.model.Candidate;
 import com.example.interviewmgmt.service.CandidateService;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/candidates")
-@CrossOrigin("*")  // Allows frontend apps to connect
 public class CandidateController {
 
     private final CandidateService candidateService;
@@ -17,17 +16,22 @@ public class CandidateController {
     }
 
     @GetMapping
-    public List<Candidate> getAll() {
+    public List<Candidate> getAllCandidates() {
         return candidateService.getAllCandidates();
     }
 
+    @GetMapping("/{id}")
+    public Candidate getCandidateById(@PathVariable Long id) {
+        return candidateService.getCandidateById(id);
+    }
+
     @PostMapping
-    public Candidate create(@RequestBody Candidate candidate) {
-        return candidateService.addCandidate(candidate);
+    public Candidate addCandidate(@RequestBody Candidate candidate) {
+        return candidateService.saveCandidate(candidate);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void deleteCandidate(@PathVariable Long id) {
         candidateService.deleteCandidate(id);
     }
 }
