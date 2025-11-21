@@ -1,5 +1,6 @@
 package com.example.interviewmgmt.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class Candidate {
     private String phone;
 
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Interview> interviews = new ArrayList<>();
 
     public Candidate() {}
