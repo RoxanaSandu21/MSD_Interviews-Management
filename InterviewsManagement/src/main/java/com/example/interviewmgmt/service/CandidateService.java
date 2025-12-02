@@ -29,4 +29,17 @@ public class CandidateService {
     public void deleteCandidate(Long id) {
         candidateRepository.deleteById(id);
     }
+
+    public Candidate registerCandidate(Candidate candidate) {
+        // business rule: email must be unique
+        List<Candidate> candidates = candidateRepository.findAll();
+        boolean emailExists = candidates.stream()
+                .anyMatch(c -> c.getEmail().equalsIgnoreCase(candidate.getEmail()));
+
+        if (emailExists) {
+            throw new IllegalStateException("A candidate with this email already exists.");
+        }
+
+        return candidateRepository.save(candidate);
+    }
 }
