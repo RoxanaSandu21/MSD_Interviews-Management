@@ -27,7 +27,7 @@ public class CandidateController {
 
     @PostMapping
     public Candidate addCandidate(@RequestBody Candidate candidate) {
-        return candidateService.saveCandidate(candidate);
+        return candidateService.registerCandidate(candidate);
     }
 
     @DeleteMapping("/{id}")

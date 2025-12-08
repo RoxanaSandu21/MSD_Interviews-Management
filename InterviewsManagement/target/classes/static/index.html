@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Interview Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-container">
+    <header>
+        <h1>Interview Management</h1>
+        <p class="subtitle">Manage candidates, interviews, tests & questions</p>
+    </header>
+
+    <nav class="tabs">
+        <button class="tab-button active" data-tab="candidates">Candidates</button>
+        <button class="tab-button" data-tab="interviews">Interviews</button>
+        <button class="tab-button" data-tab="tests">Tests</button>
+        <button class="tab-button" data-tab="questions">Questions</button>
+    </nav>
+
+    <main>
+        <!-- Candidates -->
+        <section id="tab-candidates" class="tab-content active">
+            <div class="panel">
+                <h2>Candidates</h2>
+                <form id="candidate-form" class="form-grid">
+                    <input type="text" id="candidate-name" placeholder="Name" required>
+                    <input type="email" id="candidate-email" placeholder="Email" required>
+                    <input type="text" id="candidate-phone" placeholder="Phone" required>
+                    <button type="submit">Add Candidate</button>
+                </form>
+                <h3>Existing Candidates</h3>
+                <table id="candidates-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Interviews -->
+        <section id="tab-interviews" class="tab-content">
+            <div class="panel">
+                <h2>Interviews</h2>
+                <form id="interview-form" class="form-grid">
+                    <input type="datetime-local" id="interview-datetime" required>
+                    <input type="text" id="interview-position" placeholder="Position" required>
+                    <input type="number" id="interview-candidateId" placeholder="Candidate ID" required>
+                    <input type="number" id="interview-testId" placeholder="Test ID (optional)">
+                    <input type="text" id="interview-result" placeholder="Result (e.g. Scheduled)">
+                    <button type="submit">Schedule Interview</button>
+                </form>
+                <h3>Existing Interviews</h3>
+                <table id="interviews-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date & Time</th>
+                        <th>Position</th>
+                        <th>Candidate ID</th>
+                        <th>Test ID</th>
+                        <th>Result</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Tests -->
+        <section id="tab-tests" class="tab-content">
+            <div class="panel">
+                <h2>Tests</h2>
+                <form id="test-form" class="form-grid">
+                    <input type="text" id="test-area" placeholder="Area (e.g. Java)" required>
+                    <input type="text" id="test-difficulty" placeholder="Difficulty (e.g. Easy)" required>
+                    <button type="submit">Create Test</button>
+                </form>
+                <h3>Existing Tests</h3>
+                <table id="tests-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Area</th>
+                        <th>Difficulty</th>
+                        <th>#Questions</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Questions -->
+        <section id="tab-questions" class="tab-content">
+            <div class="panel">
+                <h2>Questions</h2>
+                <form id="question-form" class="form-grid">
+                    <input type="text" id="question-text" placeholder="Question text" required>
+                    <input type="text" id="question-area" placeholder="Area (e.g. Java)" required>
+                    <input type="text" id="question-difficulty" placeholder="Difficulty (e.g. Medium)" required>
+                    <input type="text" id="question-correct" placeholder="Correct answer" required>
+                    <input type="number" id="question-testId" placeholder="Test ID (optional)">
+                    <button type="submit">Add Question</button>
+                </form>
+                <h3>Existing Questions</h3>
+                <table id="questions-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Text</th>
+                        <th>Area</th>
+                        <th>Difficulty</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <div id="toast" class="toast hidden"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

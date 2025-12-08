@@ -1,5 +1,6 @@
 package com.example.interviewmgmt;
 
+import com.example.interviewmgmt.model.Question;
 import com.example.interviewmgmt.repo.TestRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +19,26 @@ class TestRepositoryTest {
     private TestRepository testRepository;
 
     @Test
-    void testSaveAndFindTest() {
-        com.example.interviewmgmt.model.Test test = new com.example.interviewmgmt.model.Test("Java", "Medium");
+    void testSaveAndFindTestEntity() {
 
-        com.example.interviewmgmt.model.Test saved = testRepository.save(test);
+        com.example.interviewmgmt.model.Test testEntity =
+                new com.example.interviewmgmt.model.Test("Java", "Medium");
+
+        // simulate adding 2 questions
+        Question q1 = new Question("Q1", "Java", "Medium", "A1");
+        Question q2 = new Question("Q2", "Java", "Medium", "A2");
+        testEntity.addQuestion(q1);
+        testEntity.addQuestion(q2);
+
+        // mark first as correct, second as incorrect
+        testEntity.setAnswerCorrectness(0, true);
+        testEntity.setAnswerCorrectness(1, false);
+
+        com.example.interviewmgmt.model.Test saved = testRepository.save(testEntity);
 
         assertThat(saved.getId()).isNotNull();
-        assertThat(saved.getArea()).isEqualTo("Java");
-        assertThat(saved.getDifficulty()).isEqualTo("Medium");
-
-        com.example.interviewmgmt.model.Test found = testRepository.findById(saved.getId()).orElse(null);
-        assertThat(found).isNotNull();
-        assertThat(found.getArea()).isEqualTo("Java");
+        assertThat(saved.getQuestions()).hasSize(2);
+        assertThat(saved.getAnswersCorrect()).containsExactly(true, false);
     }
+
 }
