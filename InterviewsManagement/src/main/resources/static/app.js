@@ -37,9 +37,59 @@ async function loadCandidates() {
           <td>${c.id}</td>
           <td>${c.name}</td>
           <td>${c.email}</td>
-          <td>${c.phone}</td>`;
+          <td>${c.phone}</td>
+          <td>
+             <button class="small-button view-interviews-btn"
+                     data-id="${c.id}"
+                     data-name="${c.name}">
+                 Interviews
+             </button>
+          </td>`;
         tbody.appendChild(tr);
     });
+
+    // add click handlers for "Interviews" buttons
+    tbody.querySelectorAll(".view-interviews-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const id = btn.dataset.id;
+            const name = btn.dataset.name;
+            loadInterviewsForCandidate(id, name);
+        });
+    });
+}
+
+async function loadInterviewsForCandidate(candidateId, candidateName) {
+    const res = await fetch(`${API_BASE}/candidates/${candidateId}`);
+    if (!res.ok) {
+        showToast("Error loading interviews for candidate");
+        return;
+    }
+    const candidate = await res.json();
+
+    const panel = document.getElementById("candidate-interviews-panel");
+    const nameSpan = document.getElementById("candidate-interviews-name");
+    const tbody = document.querySelector("#candidate-interviews-table tbody");
+
+    nameSpan.textContent = `${candidate.name} (ID ${candidate.id})`;
+    tbody.innerHTML = "";
+
+    if (candidate.interviews && candidate.interviews.length > 0) {
+        candidate.interviews.forEach(i => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${i.id}</td>
+              <td>${i.dateTime}</td>
+              <td>${i.position}</td>
+              <td>${i.result || ""}</td>`;
+            tbody.appendChild(tr);
+        });
+    } else {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="4">No interviews for this candidate.</td>`;
+        tbody.appendChild(tr);
+    }
+
+    panel.classList.remove("hidden");
 }
 
 document.getElementById("candidate-form").addEventListener("submit", async (e) => {
@@ -72,13 +122,11 @@ async function loadInterviews() {
     tbody.innerHTML = "";
     data.forEach(i => {
         const tr = document.createElement("tr");
-        const candidateId = i.candidate ? i.candidate.id : "";
         const testId = i.test ? i.test.id : "";
         tr.innerHTML = `
           <td>${i.id}</td>
           <td>${i.dateTime}</td>
           <td>${i.position}</td>
-          <td>${candidateId}</td>
           <td>${testId}</td>
           <td>${i.result || ""}</td>`;
         tbody.appendChild(tr);
@@ -88,12 +136,12 @@ async function loadInterviews() {
 document.getElementById("interview-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const body = {
+        candidateId: Number(document.getElementById("interview-candidateId").value),
         dateTime: document.getElementById("interview-datetime").value,
         position: document.getElementById("interview-position").value,
-        candidateId: Number(document.getElementById("interview-candidateId").value),
+        result: document.getElementById("interview-result").value || "Scheduled",
         testId: document.getElementById("interview-testId").value ?
-            Number(document.getElementById("interview-testId").value) : null,
-        result: document.getElementById("interview-result").value || "Scheduled"
+            Number(document.getElementById("interview-testId").value) : null
     };
 
     const res = await fetch(`${API_BASE}/interviews`, {
@@ -106,6 +154,17 @@ document.getElementById("interview-form").addEventListener("submit", async (e) =
         showToast("Interview scheduled");
         e.target.reset();
         loadInterviews();
+        // reload candidate-specific panel if it's open
+        const panel = document.getElementById("candidate-interviews-panel");
+        if (!panel.classList.contains("hidden")) {
+            const nameSpan = document.getElementById("candidate-interviews-name");
+            const text = nameSpan.textContent || "";
+            const match = text.match(/ID (\d+)\)?$/);
+            if (match) {
+                const candidateId = match[1];
+                loadInterviewsForCandidate(candidateId);
+            }
+        }
     } else {
         showToast("Error scheduling interview");
     }
@@ -118,16 +177,64 @@ async function loadTests() {
     const tbody = document.querySelector("#tests-table tbody");
     tbody.innerHTML = "";
     data.forEach(t => {
+        const tr = document.createElement("tr");
         const numQuestions = t.questions ? t.questions.length : 0;
         const id = t.id ?? "";
-        tbody.innerHTML += `
-          <tr>
-            <td>${id}</td>
-            <td>${t.area}</td>
-            <td>${t.difficulty}</td>
-            <td>${numQuestions}</td>
-          </tr>`;
+
+        tr.innerHTML = `
+          <td>${id}</td>
+          <td>${t.area}</td>
+          <td>${t.difficulty}</td>
+          <td>${numQuestions}</td>
+          <td>
+            <button class="small-button view-test-btn" data-id="${id}">View</button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
     });
+
+    // Add click event to buttons
+    tbody.querySelectorAll(".view-test-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            loadQuestionsForTest(btn.dataset.id);
+        });
+    });
+}
+
+async function loadQuestionsForTest(testId) {
+    const res = await fetch(`${API_BASE}/tests/${testId}`);
+    if (!res.ok) {
+        showToast("Could not load questions for this test");
+        return;
+    }
+    const test = await res.json();
+
+    const panel = document.getElementById("test-questions-panel");
+    const idSpan = document.getElementById("test-questions-id");
+    const tbody = document.querySelector("#test-questions-table tbody");
+
+    idSpan.textContent = test.id;
+    tbody.innerHTML = "";
+
+    if (test.questions && test.questions.length > 0) {
+        test.questions.forEach(q => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${q.id}</td>
+              <td>${q.text}</td>
+              <td>${q.area}</td>
+              <td>${q.difficulty}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } else {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="4">No questions for this test.</td>`;
+        tbody.appendChild(tr);
+    }
+
+    panel.classList.remove("hidden");
 }
 
 document.getElementById("test-form").addEventListener("submit", async (e) => {
@@ -169,31 +276,45 @@ async function loadQuestions() {
 
 document.getElementById("question-form").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const testIdValue = document.getElementById("question-testId").value;
-    const body = {
+
+    const testIdValue = document.getElementById("question-testId").value.trim();
+
+    const questionPayload = {
         text: document.getElementById("question-text").value,
         area: document.getElementById("question-area").value,
         difficulty: document.getElementById("question-difficulty").value,
         correctAnswer: document.getElementById("question-correct").value
     };
+
+    let res;
+
     if (testIdValue) {
-        body.testId = Number(testIdValue);
+        // attach question to a specific test
+        const testId = Number(testIdValue);
+        res = await fetch(`${API_BASE}/tests/${testId}/questions`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(questionPayload)
+        });
+    } else {
+        // just add question to global pool
+        res = await fetch(`${API_BASE}/questions`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(questionPayload)
+        });
     }
 
-    const res = await fetch(`${API_BASE}/questions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body)
-    });
     if (res.ok) {
         showToast("Question added");
         e.target.reset();
-        loadQuestions();
-        loadTests(); // to refresh #Questions counts
+        await loadQuestions();
+        await loadTests(); // refresh #Questions column
     } else {
         showToast("Error adding question");
     }
 });
+
 
 // ----- Initial load -----
 loadCandidates();

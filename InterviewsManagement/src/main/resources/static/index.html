@@ -38,10 +38,27 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
+                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
+
+                <!-- Candidate-specific interviews -->
+                <div id="candidate-interviews-panel" class="panel secondary-panel hidden">
+                    <h3>Interviews for <span id="candidate-interviews-name"></span></h3>
+                    <table id="candidate-interviews-table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date & Time</th>
+                            <th>Position</th>
+                            <th>Result</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
@@ -64,7 +81,6 @@
                         <th>ID</th>
                         <th>Date & Time</th>
                         <th>Position</th>
-                        <th>Candidate ID</th>
                         <th>Test ID</th>
                         <th>Result</th>
                     </tr>
@@ -91,12 +107,31 @@
                         <th>Area</th>
                         <th>Difficulty</th>
                         <th>#Questions</th>
+                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
+
+                <!-- Test-specific questions -->
+                <div id="test-questions-panel" class="panel secondary-panel hidden">
+                    <h3>Questions for Test <span id="test-questions-id"></span></h3>
+                    <table id="test-questions-table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Text</th>
+                            <th>Area</th>
+                            <th>Difficulty</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
             </div>
         </section>
+
 
         <!-- Questions -->
         <section id="tab-questions" class="tab-content">

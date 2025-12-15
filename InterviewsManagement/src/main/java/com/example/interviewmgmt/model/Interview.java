@@ -1,7 +1,6 @@
 package com.example.interviewmgmt.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
@@ -24,7 +23,7 @@ public class Interview {
     @JsonBackReference
     private Candidate candidate;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "test_id")
     private Test test;
 

@@ -1,7 +1,12 @@
 package com.example.interviewmgmt.web;
 
+import com.example.interviewmgmt.model.Candidate;
 import com.example.interviewmgmt.model.Interview;
+import com.example.interviewmgmt.model.Test;
+import com.example.interviewmgmt.repo.InterviewRepository;
+import com.example.interviewmgmt.service.CandidateService;
 import com.example.interviewmgmt.service.InterviewService;
+import com.example.interviewmgmt.service.TestService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,9 +17,13 @@ import java.util.List;
 public class InterviewController {
 
     private final InterviewService interviewService;
+    private final CandidateService candidateService;
+    private final TestService testService;
 
-    public InterviewController(InterviewService interviewService) {
+    public InterviewController(InterviewService interviewService,  CandidateService candidateService, TestService testService) {
         this.interviewService = interviewService;
+        this.candidateService = candidateService;
+        this.testService = testService;
     }
 
     @GetMapping
@@ -30,7 +39,26 @@ public class InterviewController {
     }
 
     @PostMapping
-    public Interview create(@RequestBody Interview interview) {
+    public Interview createInterview(@RequestBody com.example.interviewmgmt.web.InterviewRequest req) {
+
+        Candidate candidate = candidateService.getCandidateById(req.getCandidateId());
+        if (candidate == null) {
+            throw new RuntimeException("Candidate not found: " + req.getCandidateId());
+        }
+
+        Test test = null;
+        if (req.getTestId() != null) {
+            test = testService.getTestById(req.getTestId());
+            if (test == null) {
+                throw new RuntimeException("Test not found: " + req.getTestId());
+            }
+        }
+
+        Interview interview = new Interview(req.getDateTime(), req.getPosition());
+        interview.setCandidate(candidate);
+        interview.setTest(test);
+        interview.setResult(req.getResult());
+
         return interviewService.saveInterview(interview);
     }
 

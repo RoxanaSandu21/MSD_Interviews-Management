@@ -160,3 +160,28 @@ tbody tr:nth-child(even) {
 .toast.hidden {
     display: none;
 }
+
+.hidden {
+    display: none;
+}
+
+.secondary-panel {
+    margin-top: 16px;
+    background: #f3f4f6;
+    padding: 12px 10px 16px;
+    border-radius: 12px;
+}
+
+.small-button {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    border-radius: 999px;
+    border: none;
+    background: #111827;
+    color: #f9fafb;
+    cursor: pointer;
+}
+
+.small-button:hover {
+    opacity: 0.9;
+}
