@@ -3,7 +3,7 @@ package com.example.interviewmgmt.web;
 import com.example.interviewmgmt.model.Candidate;
 import com.example.interviewmgmt.model.Interview;
 import com.example.interviewmgmt.model.Test;
-import com.example.interviewmgmt.repo.InterviewRepository;
+import com.example.interviewmgmt.dto.TestEvaluationRequest;
 import com.example.interviewmgmt.service.CandidateService;
 import com.example.interviewmgmt.service.InterviewService;
 import com.example.interviewmgmt.service.TestService;
@@ -79,5 +79,40 @@ public class InterviewController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         interviewService.deleteInterview(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/complete")
+    public ResponseEntity<Interview> completeInterview(@PathVariable Long id,
+                                                       @RequestBody TestEvaluationRequest request) {
+        Interview interview = interviewService.getInterviewById(id)
+                .orElseThrow(() -> new RuntimeException("Interview not found"));
+
+        Test test = interview.getTest();
+        if (test == null) {
+            throw new RuntimeException("This interview has no test assigned");
+        }
+
+        if (test.getQuestions() == null || test.getQuestions().isEmpty()) {
+            throw new RuntimeException("Test has no questions");
+        }
+
+        List<Boolean> flags = request.getAnswersCorrect();
+        int questionCount = test.getQuestions().size();
+
+        // Normalize answersCorrect size to number of questions
+        List<Boolean> normalized = new java.util.ArrayList<>();
+        for (int i = 0; i < questionCount; i++) {
+            boolean val = (flags != null && i < flags.size() && Boolean.TRUE.equals(flags.get(i)));
+            normalized.add(val);
+        }
+        test.setAnswersCorrect(normalized);
+
+        long correctCount = test.getNumberOfCorrectAnswers();
+
+        // use result as STATUS field: mark as Completed
+        interview.setResult("Completed");
+
+        Interview saved = interviewService.saveInterview(interview);
+        return ResponseEntity.ok(saved);
     }
 }

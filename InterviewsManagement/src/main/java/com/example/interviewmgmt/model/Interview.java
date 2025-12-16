@@ -1,6 +1,7 @@
 package com.example.interviewmgmt.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
@@ -34,6 +35,11 @@ public class Interview {
     public Interview(LocalDateTime dateTime, String position) {
         this.dateTime = dateTime;
         this.position = position;
+    }
+
+    @JsonProperty("candidateId")
+    public Long getCandidateId() {
+        return candidate != null ? candidate.getId() : null;
     }
 
     public Long getId() { return id; }

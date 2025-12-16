@@ -82,11 +82,31 @@
                         <th>Date & Time</th>
                         <th>Position</th>
                         <th>Test ID</th>
+                        <th>Candidate ID</th>
+                        <th>Status</th>
                         <th>Result</th>
                     </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
+            </div>
+            <div id="interview-test-panel" class="panel secondary-panel hidden">
+                <h3>Test for Interview <span id="interview-test-id"></span></h3>
+                <form id="test-evaluation-form">
+                    <input type="hidden" id="evaluation-interview-id">
+                    <table id="interview-test-questions-table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Question</th>
+                            <th>Correct Answer</th>
+                            <th>Answered Correctly?</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <button type="submit" style="margin-top: 10px;">Submit result</button>
+                </form>
             </div>
         </section>
 

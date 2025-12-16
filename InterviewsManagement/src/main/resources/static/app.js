@@ -123,15 +123,84 @@ async function loadInterviews() {
     data.forEach(i => {
         const tr = document.createElement("tr");
         const testId = i.test ? i.test.id : "";
+        const candidateId = i.candidateId || "";
+
+        const status = i.result || "Scheduled";
+
+        let resultCellHtml = "";
+
+        if (status === "Completed" && i.test && i.test.questions) {
+            const total = i.test.questions.length;
+            const correct = i.test.answersCorrect
+                ? i.test.answersCorrect.filter(v => v === true).length
+                : 0;
+            resultCellHtml = `${correct}/${total}`;
+        } else if (status === "Scheduled" && i.test && i.test.questions && i.test.questions.length > 0) {
+            // Show Start button only if there is a test with questions
+            resultCellHtml = `<button class="small-button start-test-btn" data-id="${i.id}">Start</button>`;
+        } else {
+            resultCellHtml = "";
+        }
+
         tr.innerHTML = `
           <td>${i.id}</td>
           <td>${i.dateTime}</td>
           <td>${i.position}</td>
           <td>${testId}</td>
-          <td>${i.result || ""}</td>`;
+          <td>${candidateId}</td>
+          <td>${status}</td>
+          <td>${resultCellHtml}</td>
+        `;
         tbody.appendChild(tr);
     });
+
+    // attach click listeners for Start buttons
+    tbody.querySelectorAll(".start-test-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const interviewId = btn.dataset.id;
+            loadTestForInterview(interviewId);
+        });
+    });
 }
+
+async function loadTestForInterview(interviewId) {
+    const res = await fetch(`${API_BASE}/interviews/${interviewId}`);
+    if (!res.ok) {
+        showToast("Error loading interview/test");
+        return;
+    }
+    const interview = await res.json();
+
+    if (!interview.test || !interview.test.questions || interview.test.questions.length === 0) {
+        showToast("This interview has no test or no questions");
+        return;
+    }
+
+    const panel = document.getElementById("interview-test-panel");
+    const idSpan = document.getElementById("interview-test-id");
+    const hiddenInterviewId = document.getElementById("evaluation-interview-id");
+    const tbody = document.querySelector("#interview-test-questions-table tbody");
+
+    idSpan.textContent = `${interview.test.id}`;
+    hiddenInterviewId.value = interview.id;
+    tbody.innerHTML = "";
+
+    interview.test.questions.forEach((q, idx) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td>${q.text}</td>
+          <td>${q.correctAnswer}</td>
+          <td>
+            <input type="checkbox" class="answer-correct-checkbox" data-index="${idx}">
+          </td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    panel.classList.remove("hidden");
+}
+
 
 document.getElementById("interview-form").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -169,6 +238,41 @@ document.getElementById("interview-form").addEventListener("submit", async (e) =
         showToast("Error scheduling interview");
     }
 });
+
+document.getElementById("test-evaluation-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const interviewId = document.getElementById("evaluation-interview-id").value;
+    const checkboxes = document.querySelectorAll(".answer-correct-checkbox");
+    const answersCorrect = Array.from(checkboxes).map(cb => cb.checked);
+
+    const res = await fetch(`${API_BASE}/interviews/${interviewId}/complete`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answersCorrect })
+    });
+
+    if (res.ok) {
+        showToast("Interview completed");
+        document.getElementById("interview-test-panel").classList.add("hidden");
+        loadInterviews();
+
+        // refresh candidate-specific panel if open
+        const panel = document.getElementById("candidate-interviews-panel");
+        if (!panel.classList.contains("hidden")) {
+            const nameSpan = document.getElementById("candidate-interviews-name");
+            const text = nameSpan.textContent || "";
+            const match = text.match(/ID (\d+)\)?$/);
+            if (match) {
+                const candidateId = match[1];
+                loadInterviewsForCandidate(candidateId);
+            }
+        }
+    } else {
+        showToast("Error completing interview");
+    }
+});
+
 
 // ----- Tests -----
 async function loadTests() {
