@@ -122,6 +122,7 @@ table {
     background: #f9fafb;
     border-radius: 12px;
     overflow: hidden;
+    text-align: center;
 }
 
 thead {
