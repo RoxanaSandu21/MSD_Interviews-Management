@@ -1,5 +1,11 @@
--- Candidates
+-- Interviewers
+INSERT INTO interviewer (name, email, department)
+VALUES ('John Recruiter', 'john@company.com', 'Development');
 
+INSERT INTO interviewer (name, email, department)
+VALUES ('Jane Recruiter', 'jane@company.com', 'Testing');
+
+-- Candidates
 INSERT INTO candidate (name, email, phone)
 VALUES ('Alice Johnson', 'alice.johnson@email.com', '1234567890');
 
@@ -30,7 +36,8 @@ VALUES
     ('What is a smoke test?', 'QA', 'Easy', 'A preliminary test to check basic functionality.', 2);
 
 -- Interviews
-INSERT INTO interview (date_time, position, candidate_id, test_id, result)
+INSERT INTO interview (date_time, position, candidate_id, test_id, interviewer_id, result)
 VALUES
-    (CURRENT_TIMESTAMP, 'Java Developer', 1, 1, 'Scheduled'),
-    (CURRENT_TIMESTAMP, 'QA Engineer', 2, 2, 'Completed');
+    (CURRENT_TIMESTAMP, 'Java Developer', 1, 1, 1, 'Scheduled'),
+    (CURRENT_TIMESTAMP, 'QA Engineer', 2, 2, 2, 'Completed');
+

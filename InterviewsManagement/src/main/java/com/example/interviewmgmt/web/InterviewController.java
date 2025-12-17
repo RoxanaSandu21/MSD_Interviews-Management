@@ -1,11 +1,14 @@
 package com.example.interviewmgmt.web;
 
+import com.example.interviewmgmt.dto.InterviewRequest;
 import com.example.interviewmgmt.model.Candidate;
 import com.example.interviewmgmt.model.Interview;
+import com.example.interviewmgmt.model.Interviewer;
 import com.example.interviewmgmt.model.Test;
 import com.example.interviewmgmt.dto.TestEvaluationRequest;
 import com.example.interviewmgmt.service.CandidateService;
 import com.example.interviewmgmt.service.InterviewService;
+import com.example.interviewmgmt.service.InterviewerService;
 import com.example.interviewmgmt.service.TestService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +22,13 @@ public class InterviewController {
     private final InterviewService interviewService;
     private final CandidateService candidateService;
     private final TestService testService;
+    private final InterviewerService interviewerService;
 
-    public InterviewController(InterviewService interviewService,  CandidateService candidateService, TestService testService) {
+    public InterviewController(InterviewService interviewService,  CandidateService candidateService, TestService testService, InterviewerService interviewerService) {
         this.interviewService = interviewService;
         this.candidateService = candidateService;
         this.testService = testService;
+        this.interviewerService = interviewerService;
     }
 
     @GetMapping
@@ -39,11 +44,16 @@ public class InterviewController {
     }
 
     @PostMapping
-    public Interview createInterview(@RequestBody com.example.interviewmgmt.web.InterviewRequest req) {
+    public Interview createInterview(@RequestBody InterviewRequest req) {
 
         Candidate candidate = candidateService.getCandidateById(req.getCandidateId());
         if (candidate == null) {
             throw new RuntimeException("Candidate not found: " + req.getCandidateId());
+        }
+
+        Interviewer interviewer = interviewerService.getById(req.getInterviewerId());
+        if (interviewer == null) {
+            throw new RuntimeException("Interviewer not found: " + req.getInterviewerId());
         }
 
         Test test = null;
@@ -56,6 +66,7 @@ public class InterviewController {
 
         Interview interview = new Interview(req.getDateTime(), req.getPosition());
         interview.setCandidate(candidate);
+        interview.setInterviewer(interviewer);
         interview.setTest(test);
         interview.setResult(req.getResult());
 
@@ -109,7 +120,6 @@ public class InterviewController {
 
         long correctCount = test.getNumberOfCorrectAnswers();
 
-        // use result as STATUS field: mark as Completed
         interview.setResult("Completed");
 
         Interview saved = interviewService.saveInterview(interview);

@@ -28,6 +28,11 @@ public class Interview {
     @JoinColumn(name = "test_id")
     private Test test;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "interviewer_id")
+    @JsonBackReference("interviewer-interviews")
+    private Interviewer interviewer;
+
     private String result; // optional outcome or feedback
 
     public Interview() {}
@@ -42,6 +47,11 @@ public class Interview {
         return candidate != null ? candidate.getId() : null;
     }
 
+    @JsonProperty("interviewerId")
+    public Long getInterviewerId() {
+        return interviewer != null ? interviewer.getId() : null;
+    }
+
     public Long getId() { return id; }
     public LocalDateTime getDateTime() { return dateTime; }
     public void setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; }
@@ -53,4 +63,6 @@ public class Interview {
     public void setTest(Test test) { this.test = test; }
     public String getResult() { return result; }
     public void setResult(String result) { this.result = result; }
+    public Interviewer getInterviewer() { return interviewer; }
+    public void setInterviewer(Interviewer interviewer) { this.interviewer = interviewer; }
 }

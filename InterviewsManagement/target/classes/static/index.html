@@ -17,6 +17,7 @@
         <button class="tab-button" data-tab="interviews">Interviews</button>
         <button class="tab-button" data-tab="tests">Tests</button>
         <button class="tab-button" data-tab="questions">Questions</button>
+        <button class="tab-button" data-tab="interviewers">Interviewers</button>
     </nav>
 
     <main>
@@ -71,6 +72,7 @@
                     <input type="text" id="interview-position" placeholder="Position" required>
                     <input type="number" id="interview-candidateId" placeholder="Candidate ID" required>
                     <input type="number" id="interview-testId" placeholder="Test ID (optional)">
+                    <input type="number" id="interview-interviewerId" placeholder="Interviewer ID" required>
                     <input type="text" id="interview-result" placeholder="Result (e.g. Scheduled)">
                     <button type="submit">Schedule Interview</button>
                 </form>
@@ -83,6 +85,7 @@
                         <th>Position</th>
                         <th>Test ID</th>
                         <th>Candidate ID</th>
+                        <th>Interviewer ID</th>
                         <th>Status</th>
                         <th>Result</th>
                     </tr>
@@ -90,24 +93,7 @@
                     <tbody></tbody>
                 </table>
             </div>
-            <div id="interview-test-panel" class="panel secondary-panel hidden">
-                <h3>Test for Interview <span id="interview-test-id"></span></h3>
-                <form id="test-evaluation-form">
-                    <input type="hidden" id="evaluation-interview-id">
-                    <table id="interview-test-questions-table">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Question</th>
-                            <th>Correct Answer</th>
-                            <th>Answered Correctly?</th>
-                        </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                    <button type="submit" style="margin-top: 10px;">Submit result</button>
-                </form>
-            </div>
+
         </section>
 
         <!-- Tests -->
@@ -179,6 +165,71 @@
                 </table>
             </div>
         </section>
+
+        <!-- Interviewers -->
+        <section id="tab-interviewers" class="tab-content">
+            <div class="panel">
+                <h2>Interviewers</h2>
+                <form id="interviewer-form" class="form-grid">
+                    <input type="text" id="interviewer-name" placeholder="Name" required>
+                    <input type="email" id="interviewer-email" placeholder="Email" required>
+                    <input type="text" id="interviewer-department" placeholder="Department (optional)">
+                    <button type="submit">Add Interviewer</button>
+                </form>
+
+                <h3>Existing Interviewers</h3>
+                <table id="interviewers-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <!-- Interviewer-specific interviews -->
+                <div id="interviewer-interviews-panel" class="panel secondary-panel hidden">
+                    <h3>Interviews for <span id="interviewer-interviews-name"></span></h3>
+                    <table id="interviewer-interviews-table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date & Time</th>
+                            <th>Position</th>
+                            <th>Candidate ID</th>
+                            <th>Test ID</th>
+                            <th>Status</th>
+                            <th>Result</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="interview-test-panel" class="panel secondary-panel hidden">
+                <h3>Test for Interview <span id="interview-test-id"></span></h3>
+                <form id="test-evaluation-form">
+                    <input type="hidden" id="evaluation-interview-id">
+                    <table id="interview-test-questions-table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Question</th>
+                            <th>Correct Answer</th>
+                            <th>Answered Correctly?</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <button type="submit" style="margin-top: 10px;">Submit result</button>
+                </form>
+            </div>
+        </section>
+
     </main>
 
     <div id="toast" class="toast hidden"></div>

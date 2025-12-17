@@ -1,4 +1,4 @@
-package com.example.interviewmgmt.web;
+package com.example.interviewmgmt.dto;
 
 import java.time.LocalDateTime;
 
@@ -7,6 +7,7 @@ public class InterviewRequest {
     private String position;
     private Long candidateId;
     private Long testId;
+    private Long interviewerId;
     private String result;
 
     // getters and setters
@@ -21,6 +22,9 @@ public class InterviewRequest {
 
     public Long getTestId() { return testId; }
     public void setTestId(Long testId) { this.testId = testId; }
+
+    public Long getInterviewerId() { return interviewerId; }
+    public void setInterviewerId(Long interviewerId) { this.interviewerId = interviewerId; }
 
     public String getResult() { return result; }
     public void setResult(String result) { this.result = result; }
